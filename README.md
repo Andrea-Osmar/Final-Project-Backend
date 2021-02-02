@@ -1,7 +1,14 @@
-# Express Starter Project
+## The project
 
-This project includes the packages and babel setup for an express server, and is just meant to make things a little simpler to get up and running with.
+## Tech used
 
-## Getting started
+- Node.js
+- Express
+- MongoDB
+- MongoDB Compass
 
-Install dependencies with `npm install`, then start the server by running `npm run dev`
+## View it live
+
+* (Backend API)[https://enbostad.herokuapp.com/]
+
+

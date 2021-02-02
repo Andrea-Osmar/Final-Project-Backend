@@ -8,7 +8,6 @@ import listEndpoints from 'express-list-endpoints'
 
 import { authenticateUser, checkConnection } from './middlewares/middlewares'  //connection and safety middlewares are moved here
 import db from './models' //all db logic is moved to the 'models' folder
-
 import bent from "bent"
 
 //__________ Server
@@ -105,7 +104,6 @@ app.post("/saveData",
 		}
 	})
 
-
 //__________ Endpoint to list users saved ads
 app.get("/getData", authenticateUser)
 app.get("/getData", async (req, res) => {
@@ -120,21 +118,7 @@ app.get("/getData", async (req, res) => {
 	}
 })
 
-//__________ TODO:Endpoint for deleting listings
-
 //__________ Start the server
 app.listen(port, () => {
 	console.log(`Server running on http://localhost:${port}`)
 })
-
-
-// TODO: 
-// FIXME: Save function - can save ad multiple time- fix
-// Add authentication - DONE
-// Schema for user - DONE
-// Schema for bostad - DONE
-// Add get request to bostads api - DONE
-// Add custom error handling
-// Save & delete endpoint
-// Validator for email?
-// Dotenv
