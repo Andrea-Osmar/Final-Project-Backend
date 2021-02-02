@@ -9,6 +9,6 @@
 
 ## View it live
 
-* (Backend API)[https://enbostad.herokuapp.com/]
+* [Backend API](https://enbostad.herokuapp.com/)
 
 
