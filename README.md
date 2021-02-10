@@ -23,8 +23,8 @@ The project is built with Restful API built with Express and Node.js. I have sto
 
 ## View it live
 
-* (Backend API)[https://enbostad.herokuapp.com/]
-* (Frontend Repo)[https://github.com/Andrea-Osmar/Final-Project]
+* [Backend API](https://enbostad.herokuapp.com/)
+* [Frontend Repo](https://github.com/Andrea-Osmar/Final-Project)
 
 
 
