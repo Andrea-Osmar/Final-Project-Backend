@@ -3,12 +3,12 @@ import bodyParser from 'body-parser'
 import cors from 'cors'
 
 //__________ New imports
-import bcrypt from "bcrypt"
+import bcrypt from 'bcrypt'
 import listEndpoints from 'express-list-endpoints'
 
-import { authenticateUser, checkConnection } from './middlewares/middlewares'  //connection and safety middlewares are moved here
-import db from './models' //all db logic is moved to the 'models' folder
-import bent from "bent"
+import { authenticateUser, checkConnection } from './middlewares/middlewares' 
+import db from './models' 
+import bent from 'bent'
 
 //__________ Server
 const port = process.env.PORT || 8080
@@ -20,105 +20,110 @@ app.use(bodyParser.json())
 
 //__________ Root endpoint
 app.get('/', (req, res) => {
-	res.send(listEndpoints(app))
+  res.send(listEndpoints(app))
 })
 
 //__________Create user
-app.post("/users", async (req, res) => {
-	try {
-		const { username, password, email } = req.body
-		const salt = bcrypt.genSaltSync()
-		const user = await new db.User({ //because all models are moved to the separate modules -access them via db.
-			username,
-			password: bcrypt.hashSync(password, salt),
-			email,
-		}).save()
+app.post('/users', async (req, res) => {
+  try {
+    const { username, password, email } = req.body
+    const salt = bcrypt.genSaltSync()
+    const user = await new db.User({
+      username,
+      password: bcrypt.hashSync(password, salt),
+      email,
+    }).save()
 
-		res.status(201).json({ userId: user._id, accessToken: user.accessToken })
-	} catch (err) {
-		res.status(400).json({ message: "could not create this user", errors: err })
-	}
+    res.status(201).json({ userId: user._id, accessToken: user.accessToken })
+  } catch (err) {
+    res.status(400).json({ message: 'could not create this user', errors: err })
+  }
 })
 
 //__________Login session
-app.post("/sessions", async (req, res) => {
-	try {
-		const user = await db.User.findOne({ email: req.body.email }) //User because models are moved to separate structure outside the server.js file
-		if (user && bcrypt.compareSync(req.body.password, user.password)) {
-			res.status(200).json({
-				userFound: true,
-				userId: user._id,
-				accessToken: user.accessToken,
-			})
-		} else {
-			res.status(400)
-			res.json({
-				userFound: false,
-				message: "Login failed, please try again.",
-			})
-		}
-	} catch (err) {
-		res
-			.status(400)
-			.json({ message: "Login failed, please try again.", errors: err })
-	}
+app.post('/sessions', async (req, res) => {
+  try {
+    const user = await db.User.findOne({ email: req.body.email }) 
+    if (user && bcrypt.compareSync(req.body.password, user.password)) {
+      res.status(200).json({
+        userFound: true,
+        userId: user._id,
+        accessToken: user.accessToken,
+      })
+    } else {
+      res.status(400)
+      res.json({
+        userFound: false,
+        message: 'Login failed, please try again.',
+      })
+    }
+  } catch (err) {
+    res
+      .status(400)
+      .json({ message: 'Login failed, please try again.', errors: err })
+  }
 })
 
 //__________ Secure personal endpoint for signed in user
-app.get("/users/:id",
-	checkConnection,
-	authenticateUser,
-	async (req, res) => {
-		try {
-			const profile = `Welcome to your page ${req.user.username}`
-			res.status(201).json(profile)
-		} catch (error) {
-			res.status(400).json({ message: "could not find user" })
-		}
-	}),
+app.get('/users/:id', checkConnection, authenticateUser, async (req, res) => {
+  try {
+    const profile = `Welcome to your page ${req.user.username}`
+    res.status(201).json(profile)
+  } catch (error) {
+    res.status(400).json({ message: 'could not find user' })
+  }
+})
 
-	//__________ Endpoint with all data
-	app.get("/list", async (req, res) => {
-		const getJSON = bent('json')
-		const object = await getJSON('https://bostad.stockholm.se/Lista/AllaAnnonser')
-		res.status(200).json(object)
-	})
+  //__________ Endpoint with all data
+  app.get('/list', async (req, res) => {
+    const getJSON = bent('json')
+    const object = await getJSON(
+      'https://bostad.stockholm.se/Lista/AllaAnnonser'
+    )
+    res.status(200).json(object)
+  })
 
 //__________ Endpoint to save specific ad
-//data are stored inside the array in the user model. 
-app.post("/saveData",
-	checkConnection,
-	authenticateUser,
-	async (req, res) => {
-		const { annonsId } = req.body
-		const user = await db.User.findById(req.user._id)
-		if (user) {
-			user.savedApartments.addToSet(annonsId) //addToSet() works like a push() but it will not duplicate data
-			user.save()
-			res.status(201).json(user.savedApartments) // and here it returns just array of annonsID
-		} else {
-			res.status(404).json({
-				message: `user not found`
-			}
-			)
-		}
-	})
+app.post('/saveData', checkConnection, authenticateUser, async (req, res) => {
+  const { annonsId } = req.body
+  const user = await db.User.findById(req.user._id)
+  if (user) {
+    user.savedApartments.addToSet(annonsId)
+    user.save()
+    res.status(201).json(user.savedApartments)
+  } else {
+    res.status(404).json({
+      message: 'user not found', error: err.errors})
+  }
+})
 
 //__________ Endpoint to list users saved ads
-app.get("/getData", authenticateUser)
-app.get("/getData", async (req, res) => {
-	try {
-		//Success
-		const user = await db.User.findById(req.user._id)
-		res.status(200).json(user.savedApartments) // and here it returns just array of annonsID
+app.get('/getData', authenticateUser)
+app.get('/getData', async (req, res) => {
+  try {
+    //Success
+    const user = await db.User.findById(req.user._id)
+    res.status(200).json(user.savedApartments) 
+  } catch (err) {
+    res.status(400).json({ message: 'Could not get item', error: err.errors })
+  }
+})
+
+//__________ Endpoint to delete users saved ads
+app.delete('/deleteData', authenticateUser)
+app.delete('/deleteData', async (req, res) => {
+	const { annonsId } = req.body 
+	const user = await db.User.findById(req.user._id)
+
+  try {
+		user.savedApartments.pull(annonsId)
+    res.status(200).json(user.savedApartments)
 	} catch (err) {
-		res
-			.status(400)
-			.json({ message: "Could not get item", error: err.errors })
-	}
+    res.status(400).json({ message: 'Could not delete item', error: err.errors })
+  }
 })
 
 //__________ Start the server
 app.listen(port, () => {
-	console.log(`Server running on http://localhost:${port}`)
+  console.log(`Server running on http://localhost:${port}`)
 })
