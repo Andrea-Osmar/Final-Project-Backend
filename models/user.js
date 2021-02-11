@@ -1,6 +1,7 @@
 import mongoose from 'mongoose'
 import crypto from 'crypto'
 
+//__________ Schema for authentication
 const userSchema = new mongoose.Schema({
   email: {
     type: String,

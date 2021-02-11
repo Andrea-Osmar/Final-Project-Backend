@@ -1,7 +1,7 @@
 ## Backend for Final Project: En Bostad
 
 This is my backend repo for my Final Project at Technigo Frontend Boot Camp. 
-The project is built with Restful API built with Express and Node.js. I have stored my data in Mongo Database and deployed the project to Heroku. 
+The project is built as a Restful API created with Express and Node.js. I have stored my data in Mongo Database and deployed the project to Heroku. 
 
 ## Tech used
 
@@ -25,6 +25,3 @@ The project is built with Restful API built with Express and Node.js. I have sto
 
 * [Backend API](https://enbostad.herokuapp.com/)
 * [Frontend Repo](https://github.com/Andrea-Osmar/Final-Project)
-
-
-
