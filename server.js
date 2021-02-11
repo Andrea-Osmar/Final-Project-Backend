@@ -1,8 +1,6 @@
 import express from 'express'
 import bodyParser from 'body-parser'
 import cors from 'cors'
-
-//__________ New imports
 import bcrypt from 'bcrypt'
 import listEndpoints from 'express-list-endpoints'
 
@@ -66,9 +64,8 @@ app.post('/sessions', async (req, res) => {
 
 //__________ Secure personal endpoint for signed in user
 app.get('/users/:id', checkConnection, authenticateUser, async (req, res) => {
-  const { id } = req.params
   try {
-    const profile = `Welcome to your page ${req.user.username}`({ _id: id })
+    const profile = `Welcome to your page ${req.user.username}`
     res.status(201).json(profile)
   } catch (error) {
     res.status(400).json({ message: 'could not find user' })
@@ -116,7 +113,7 @@ app.delete('/deleteData', async (req, res) => {
 	const { annonsId } = req.body 
 	const user = await db.User.findById(req.user._id)
   try {
-		user.savedApartments.delete(annonsId).save()
+		user.savedApartments.delete(annonsId)
     res.status(200).json(user.savedApartments)
 	} catch (err) {
     res.status(400).json({ message: 'Could not delete item', error: err.errors })
