@@ -11,6 +11,7 @@ The project is built as a Restful API created with Express and Node.js. I have s
 - Mongoose
 - MongoDB
 - MongoDB Compass
+- Bent 
 
 ## Endpoints
 
